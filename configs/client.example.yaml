@@ -1,0 +1,11 @@
+client:
+  server_url: "http://localhost:8080"
+  cache_dir: "~/.vaultfactory"
+  timeout: 30s
+
+logging:
+  level: "info"
+  format: "text"
+  output: "stdout"
+
+
