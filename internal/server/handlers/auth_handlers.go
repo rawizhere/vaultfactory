@@ -1,3 +1,4 @@
+// Package handlers содержит HTTP хендлеры для API сервера.
 package handlers
 
 import (
@@ -8,30 +9,36 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/shared/interfaces"
 )
 
+// AuthHandler обрабатывает HTTP запросы для аутентификации.
 type AuthHandler struct {
 	authService interfaces.AuthService
 }
 
+// NewAuthHandler создает новый экземпляр AuthHandler.
 func NewAuthHandler(authService interfaces.AuthService) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,
 	}
 }
 
+// RegisterRequest содержит данные для регистрации пользователя.
 type RegisterRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
+// LoginRequest содержит данные для входа пользователя.
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
+// RefreshRequest содержит данные для обновления токена.
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+// AuthResponse содержит ответ аутентификации с токенами.
 type AuthResponse struct {
 	User         interface{} `json:"user"`
 	AccessToken  string      `json:"access_token"`
@@ -43,6 +50,7 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
+// Register обрабатывает запрос на регистрацию пользователя.
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -78,6 +86,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// Login обрабатывает запрос на вход пользователя.
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -107,6 +116,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// Refresh обрабатывает запрос на обновление токена.
 func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	var req RefreshRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -135,6 +145,7 @@ func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// Logout обрабатывает запрос на выход пользователя.
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	var req RefreshRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

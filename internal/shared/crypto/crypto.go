@@ -1,3 +1,4 @@
+// Package crypto предоставляет криптографические функции для шифрования данных и хеширования паролей.
 package crypto
 
 import (
@@ -11,18 +12,21 @@ import (
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
+// CryptoService предоставляет методы для шифрования данных и работы с паролями.
 type CryptoService struct {
 	argonParams *ArgonParams
 }
 
+// ArgonParams содержит параметры для алгоритма Argon2.
 type ArgonParams struct {
-	Memory      uint32
-	Iterations  uint32
-	Parallelism uint8
-	SaltLength  uint32
-	KeyLength   uint32
+	Memory      uint32 // Память в килобайтах
+	Iterations  uint32 // Количество итераций
+	Parallelism uint8  // Количество параллельных потоков
+	SaltLength  uint32 // Длина соли в байтах
+	KeyLength   uint32 // Длина ключа в байтах
 }
 
+// NewCryptoService создает новый экземпляр CryptoService с настройками по умолчанию.
 func NewCryptoService() *CryptoService {
 	return &CryptoService{
 		argonParams: &ArgonParams{
@@ -35,6 +39,7 @@ func NewCryptoService() *CryptoService {
 	}
 }
 
+// Encrypt шифрует данные с использованием ChaCha20-Poly1305.
 func (c *CryptoService) Encrypt(data []byte, key []byte) ([]byte, error) {
 	aead, err := chacha20poly1305.New(key)
 	if err != nil {
@@ -50,6 +55,7 @@ func (c *CryptoService) Encrypt(data []byte, key []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
+// Decrypt расшифровывает данные с использованием ChaCha20-Poly1305.
 func (c *CryptoService) Decrypt(encryptedData []byte, key []byte) ([]byte, error) {
 	aead, err := chacha20poly1305.New(key)
 	if err != nil {
@@ -70,6 +76,7 @@ func (c *CryptoService) Decrypt(encryptedData []byte, key []byte) ([]byte, error
 	return plaintext, nil
 }
 
+// GenerateKey генерирует случайный ключ длиной 32 байта.
 func (c *CryptoService) GenerateKey() ([]byte, error) {
 	key := make([]byte, 32)
 	if _, err := io.ReadFull(rand.Reader, key); err != nil {
@@ -78,6 +85,7 @@ func (c *CryptoService) GenerateKey() ([]byte, error) {
 	return key, nil
 }
 
+// HashPassword создает хеш пароля с использованием Argon2id.
 func (c *CryptoService) HashPassword(password string) (string, error) {
 	salt, err := c.generateRandomBytes(c.argonParams.SaltLength)
 	if err != nil {
@@ -94,6 +102,7 @@ func (c *CryptoService) HashPassword(password string) (string, error) {
 	return encodedHash, nil
 }
 
+// VerifyPassword проверяет соответствие пароля хешу.
 func (c *CryptoService) VerifyPassword(password, encodedHash string) bool {
 	salt, hash, err := c.decodeHash(encodedHash)
 	if err != nil {
@@ -102,12 +111,10 @@ func (c *CryptoService) VerifyPassword(password, encodedHash string) bool {
 
 	otherHash := argon2.IDKey([]byte(password), salt, c.argonParams.Iterations, c.argonParams.Memory, c.argonParams.Parallelism, c.argonParams.KeyLength)
 
-	if subtle.ConstantTimeCompare(hash, otherHash) == 1 {
-		return true
-	}
-	return false
+	return subtle.ConstantTimeCompare(hash, otherHash) == 1
 }
 
+// generateRandomBytes генерирует случайную последовательность байтов заданной длины.
 func (c *CryptoService) generateRandomBytes(n uint32) ([]byte, error) {
 	b := make([]byte, n)
 	_, err := rand.Read(b)
@@ -117,6 +124,7 @@ func (c *CryptoService) generateRandomBytes(n uint32) ([]byte, error) {
 	return b, nil
 }
 
+// decodeHash декодирует хеш Argon2 и извлекает соль и хеш.
 func (c *CryptoService) decodeHash(encodedHash string) (salt, hash []byte, err error) {
 	vals := make([]string, 6)
 	parts := 0

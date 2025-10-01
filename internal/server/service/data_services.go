@@ -1,3 +1,4 @@
+// Package service содержит бизнес-логику сервера.
 package service
 
 import (
@@ -11,12 +12,14 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/shared/models"
 )
 
+// dataService реализует интерфейс DataService для работы с данными пользователей.
 type dataService struct {
 	dataRepo    interfaces.DataRepository
 	versionRepo interfaces.VersionRepository
 	crypto      *crypto.CryptoService
 }
 
+// NewDataService создает новый экземпляр DataService.
 func NewDataService(
 	dataRepo interfaces.DataRepository,
 	versionRepo interfaces.VersionRepository,
@@ -29,6 +32,7 @@ func NewDataService(
 	}
 }
 
+// CreateData создает новый элемент данных с шифрованием.
 func (s *dataService) CreateData(ctx context.Context, userID uuid.UUID, dataType models.DataType, name, metadata string, data []byte) (*models.DataItem, error) {
 	encryptionKey, err := s.crypto.GenerateKey()
 	if err != nil {
@@ -66,6 +70,7 @@ func (s *dataService) CreateData(ctx context.Context, userID uuid.UUID, dataType
 	return dataItem, nil
 }
 
+// GetData получает элемент данных по ID с проверкой прав доступа.
 func (s *dataService) GetData(ctx context.Context, userID, dataID uuid.UUID) (*models.DataItem, error) {
 	dataItem, err := s.dataRepo.GetByID(ctx, dataID)
 	if err != nil {
@@ -79,6 +84,7 @@ func (s *dataService) GetData(ctx context.Context, userID, dataID uuid.UUID) (*m
 	return dataItem, nil
 }
 
+// GetUserData получает все данные пользователя без зашифрованного содержимого.
 func (s *dataService) GetUserData(ctx context.Context, userID uuid.UUID) ([]*models.DataItem, error) {
 	items, err := s.dataRepo.GetByUserID(ctx, userID)
 	if err != nil {
@@ -93,6 +99,7 @@ func (s *dataService) GetUserData(ctx context.Context, userID uuid.UUID) ([]*mod
 	return items, nil
 }
 
+// GetUserDataByType получает данные пользователя определенного типа.
 func (s *dataService) GetUserDataByType(ctx context.Context, userID uuid.UUID, dataType models.DataType) ([]*models.DataItem, error) {
 	items, err := s.dataRepo.GetByUserIDAndType(ctx, userID, dataType)
 	if err != nil {
@@ -107,6 +114,7 @@ func (s *dataService) GetUserDataByType(ctx context.Context, userID uuid.UUID, d
 	return items, nil
 }
 
+// UpdateData обновляет элемент данных с версионированием.
 func (s *dataService) UpdateData(ctx context.Context, userID, dataID uuid.UUID, name, metadata string, data []byte) (*models.DataItem, error) {
 	dataItem, err := s.dataRepo.GetByID(ctx, dataID)
 	if err != nil {
@@ -144,6 +152,7 @@ func (s *dataService) UpdateData(ctx context.Context, userID, dataID uuid.UUID, 
 	return dataItem, nil
 }
 
+// DeleteData удаляет элемент данных с проверкой прав доступа.
 func (s *dataService) DeleteData(ctx context.Context, userID, dataID uuid.UUID) error {
 	dataItem, err := s.dataRepo.GetByID(ctx, dataID)
 	if err != nil {
@@ -161,6 +170,7 @@ func (s *dataService) DeleteData(ctx context.Context, userID, dataID uuid.UUID) 
 	return nil
 }
 
+// SyncData получает данные, измененные после указанного времени.
 func (s *dataService) SyncData(ctx context.Context, userID uuid.UUID, lastSync time.Time) ([]*models.DataItem, error) {
 	items, err := s.dataRepo.GetUpdatedSince(ctx, userID, lastSync)
 	if err != nil {

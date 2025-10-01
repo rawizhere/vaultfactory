@@ -1,3 +1,4 @@
+// Package main содержит точку входа для серверного приложения VaultFactory.
 package main
 
 import (

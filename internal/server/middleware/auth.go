@@ -1,3 +1,4 @@
+// Package middleware содержит HTTP middleware для сервера.
 package middleware
 
 import (
@@ -8,16 +9,28 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/shared/interfaces"
 )
 
+type userKey string
+
+const UserKey userKey = "user"
+
+// GetUserFromContext извлекает пользователя из контекста.
+func GetUserFromContext(ctx context.Context) interface{} {
+	return ctx.Value(UserKey)
+}
+
+// AuthMiddleware предоставляет middleware для аутентификации.
 type AuthMiddleware struct {
 	authService interfaces.AuthService
 }
 
+// NewAuthMiddleware создает новый экземпляр AuthMiddleware.
 func NewAuthMiddleware(authService interfaces.AuthService) *AuthMiddleware {
 	return &AuthMiddleware{
 		authService: authService,
 	}
 }
 
+// RequireAuth проверяет аутентификацию пользователя для защищенных маршрутов.
 func (m *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
@@ -39,9 +52,7 @@ func (m *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "user", user)
+		ctx := context.WithValue(r.Context(), UserKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
-
-

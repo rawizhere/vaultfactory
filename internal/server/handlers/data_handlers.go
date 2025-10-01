@@ -7,20 +7,24 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/tempizhere/vaultfactory/internal/server/middleware"
 	"github.com/tempizhere/vaultfactory/internal/shared/interfaces"
 	"github.com/tempizhere/vaultfactory/internal/shared/models"
 )
 
+// DataHandler обрабатывает HTTP запросы для работы с данными пользователей.
 type DataHandler struct {
 	dataService interfaces.DataService
 }
 
+// NewDataHandler создает новый экземпляр DataHandler.
 func NewDataHandler(dataService interfaces.DataService) *DataHandler {
 	return &DataHandler{
 		dataService: dataService,
 	}
 }
 
+// CreateDataRequest содержит данные для создания элемента данных.
 type CreateDataRequest struct {
 	Type     models.DataType `json:"type"`
 	Name     string          `json:"name"`
@@ -45,8 +49,9 @@ type DataResponse struct {
 	Version   int64           `json:"version"`
 }
 
+// CreateData обрабатывает запрос на создание элемента данных.
 func (h *DataHandler) CreateData(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*models.User)
+	user := r.Context().Value(middleware.UserKey).(*models.User)
 
 	var req CreateDataRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -80,8 +85,9 @@ func (h *DataHandler) CreateData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// GetData обрабатывает запрос на получение элемента данных по ID.
 func (h *DataHandler) GetData(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*models.User)
+	user := r.Context().Value(middleware.UserKey).(*models.User)
 	vars := mux.Vars(r)
 	dataID := vars["id"]
 
@@ -112,8 +118,9 @@ func (h *DataHandler) GetData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// GetUserData обрабатывает запрос на получение всех данных пользователя.
 func (h *DataHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*models.User)
+	user := r.Context().Value(middleware.UserKey).(*models.User)
 
 	dataType := r.URL.Query().Get("type")
 
@@ -149,8 +156,9 @@ func (h *DataHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(responses)
 }
 
+// UpdateData обрабатывает запрос на обновление элемента данных.
 func (h *DataHandler) UpdateData(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*models.User)
+	user := r.Context().Value(middleware.UserKey).(*models.User)
 	vars := mux.Vars(r)
 	dataID := vars["id"]
 
@@ -187,8 +195,9 @@ func (h *DataHandler) UpdateData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// DeleteData обрабатывает запрос на удаление элемента данных.
 func (h *DataHandler) DeleteData(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*models.User)
+	user := r.Context().Value(middleware.UserKey).(*models.User)
 	vars := mux.Vars(r)
 	dataID := vars["id"]
 
@@ -206,8 +215,9 @@ func (h *DataHandler) DeleteData(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// SyncData обрабатывает запрос на синхронизацию данных.
 func (h *DataHandler) SyncData(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*models.User)
+	user := r.Context().Value(middleware.UserKey).(*models.User)
 
 	lastSyncStr := r.URL.Query().Get("last_sync")
 	if lastSyncStr == "" {

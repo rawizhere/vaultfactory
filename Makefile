@@ -1,51 +1,99 @@
-.PHONY: build-server build-client build-all test clean dev-deps run-server run-client
+.PHONY: help build test lint clean deps
 
-# Build variables
-BUILD_VERSION := 1.0.0
-BUILD_DATE := $(shell powershell -Command "Get-Date -Format 'yyyy-MM-dd'")
-BUILD_COMMIT := $(shell git rev-parse --short HEAD 2>nul || echo N/A)
+help: ## Show help
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-# Build targets
-build-server:
-	go build -ldflags "-X main.buildVersion=$(BUILD_VERSION) -X 'main.buildDate=$(BUILD_DATE)' -X main.buildCommit=$(BUILD_COMMIT)" -o bin/server.exe ./cmd/server
+build: ## Build both server and client
+	@echo "Building server and client"
+	@go build -o bin/vaultfactory-server ./cmd/server
+	@go build -o bin/vaultfactory-client ./cmd/client
 
-build-client:
-	go build -ldflags "-X main.buildVersion=$(BUILD_VERSION) -X 'main.buildDate=$(BUILD_DATE)' -X main.buildCommit=$(BUILD_COMMIT)" -o bin/client.exe ./cmd/client
+build-server: ## Build server only
+	@echo "Building server"
+	@go build -o bin/vaultfactory-server ./cmd/server
 
-build-all: build-server build-client
+build-client: ## Build client only
+	@echo "Building client"
+	@go build -o bin/vaultfactory-client ./cmd/client
 
-# Test
-test:
-	go test ./...
+test: ## Run tests
+	@echo "Running tests"
+	@go test -v -race ./...
 
-# Clean
-clean:
-	rm -rf bin/
+test-coverage: ## Run tests with coverage
+	@echo "Running tests with coverage"
+	@go test -v -race -coverprofile=coverage.out ./...
+	@go tool cover -html=coverage.out -o coverage.html
 
-# Development
-dev-deps:
-	go mod download
-	go mod tidy
+lint: ## Run linters
+	@echo "Running linters"
+	@golangci-lint run
+	@staticcheck ./...
+	@go vet ./...
 
-# Database
-db-migrate:
-	# Add migration commands here when implemented
+lint-fix: ## Run linters with auto-fix
+	@echo "Running linters with auto-fix"
+	@golangci-lint run --fix
 
-# Run
-run-server: build-server
-	./bin/server
+fmt: ## Format code
+	@echo "Formatting code"
+	@go fmt ./...
 
-run-client: build-client
-	./bin/client
+fmt-check: ## Check if code is formatted
+	@if [ "$$(gofmt -s -l . | wc -l)" -gt 0 ]; then \
+		echo "Files not formatted:"; \
+		gofmt -s -l .; \
+		exit 1; \
+	fi
 
-# Help
-help:
-	@echo "Available targets:"
-	@echo "  build-server    - Build server binary"
-	@echo "  build-client    - Build client binary"
-	@echo "  build-all       - Build both server and client"
-	@echo "  test            - Run tests"
-	@echo "  clean           - Clean build artifacts"
-	@echo "  dev-deps        - Download and tidy dependencies"
-	@echo "  run-server      - Build and run server"
-	@echo "  run-client      - Build and run client"
+security: ## Run security checks
+	@echo "Running security checks"
+	@gosec ./...
+	@govulncheck ./...
+
+clean: ## Clean build artifacts
+	@echo "Cleaning build artifacts"
+	@rm -rf bin/
+	@rm -f coverage.out coverage.html
+
+deps: ## Download dependencies
+	@echo "Downloading dependencies"
+	@go mod download
+	@go mod verify
+
+deps-update: ## Update dependencies
+	@echo "Updating dependencies"
+	@go get -u ./...
+	@go mod tidy
+
+dev-setup: deps ## Setup development environment
+	@echo "Installing development tools"
+	@go install honnef.co/go/tools/cmd/staticcheck@latest
+	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	@go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
+	@go install golang.org/x/vuln/cmd/govulncheck@latest
+
+db-migrate: ## Run database migrations
+	@echo "Running database migrations"
+	@migrate -path scripts/migrations -database "postgres://vaultfactory:password@localhost:5432/vaultfactory?sslmode=disable" up
+
+db-rollback: ## Rollback database migrations
+	@echo "Rolling back database migrations"
+	@migrate -path scripts/migrations -database "postgres://vaultfactory:password@localhost:5432/vaultfactory?sslmode=disable" down
+
+docker-build: ## Build Docker images
+	@echo "Building Docker images"
+	@docker build -t vaultfactory-server -f Dockerfile.server .
+	@docker build -t vaultfactory-client -f Dockerfile.client .
+
+docker-run: ## Run with Docker Compose
+	@echo "Starting services with Docker Compose"
+	@docker-compose up -d
+
+docker-stop: ## Stop Docker Compose services
+	@echo "Stopping Docker Compose services"
+	@docker-compose down
+
+ci: fmt-check lint test ## Run CI checks locally
+
+release: clean test lint ## Prepare for release

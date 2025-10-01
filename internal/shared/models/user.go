@@ -7,6 +7,7 @@ import (
 	"github.com/uptrace/bun"
 )
 
+// User представляет пользователя системы.
 type User struct {
 	bun.BaseModel `bun:"table:users"`
 
@@ -17,6 +18,7 @@ type User struct {
 	UpdatedAt    time.Time `json:"updated_at" bun:"updated_at,default:now()"`
 }
 
+// UserSession представляет сессию пользователя.
 type UserSession struct {
 	bun.BaseModel `bun:"table:user_sessions"`
 
@@ -29,5 +31,3 @@ type UserSession struct {
 
 	User *User `json:"user,omitempty" bun:"rel:belongs-to,join:user_id=id"`
 }
-
-

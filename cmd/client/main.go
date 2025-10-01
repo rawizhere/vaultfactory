@@ -1,3 +1,4 @@
+// Package main содержит точку входа для клиентского приложения VaultFactory.
 package main
 
 import (
@@ -12,9 +13,9 @@ import (
 )
 
 var (
-	buildVersion string
-	buildDate    string
-	buildCommit  string
+	buildVersion string // Версия сборки
+	buildDate    string // Дата сборки
+	buildCommit  string // Коммит сборки
 )
 
 func main() {
@@ -49,11 +50,4 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
-}
-
-func getBuildInfo(value string) string {
-	if value == "" {
-		return "N/A"
-	}
-	return value
 }

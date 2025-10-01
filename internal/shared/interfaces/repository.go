@@ -1,3 +1,4 @@
+// Package interfaces определяет интерфейсы для работы с репозиториями данных.
 package interfaces
 
 import (
@@ -8,6 +9,7 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/shared/models"
 )
 
+// UserRepository определяет интерфейс для работы с пользователями.
 type UserRepository interface {
 	Create(ctx context.Context, user *models.User) error
 	GetByEmail(ctx context.Context, email string) (*models.User, error)
@@ -16,6 +18,7 @@ type UserRepository interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
+// SessionRepository определяет интерфейс для работы с сессиями пользователей.
 type SessionRepository interface {
 	Create(ctx context.Context, session *models.UserSession) error
 	GetByRefreshToken(ctx context.Context, refreshToken string) (*models.UserSession, error)
@@ -26,6 +29,7 @@ type SessionRepository interface {
 	DeleteExpired(ctx context.Context) error
 }
 
+// DataRepository определяет интерфейс для работы с данными пользователей.
 type DataRepository interface {
 	Create(ctx context.Context, data *models.DataItem) error
 	GetByID(ctx context.Context, id uuid.UUID) (*models.DataItem, error)
@@ -36,6 +40,7 @@ type DataRepository interface {
 	GetUpdatedSince(ctx context.Context, userID uuid.UUID, since time.Time) ([]*models.DataItem, error)
 }
 
+// VersionRepository определяет интерфейс для работы с версиями данных.
 type VersionRepository interface {
 	Create(ctx context.Context, version *models.DataVersion) error
 	GetByDataID(ctx context.Context, dataID uuid.UUID) ([]*models.DataVersion, error)

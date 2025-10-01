@@ -11,6 +11,7 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/shared/models"
 )
 
+// authService реализует интерфейс AuthService для аутентификации пользователей.
 type authService struct {
 	userRepo    interfaces.UserRepository
 	sessionRepo interfaces.SessionRepository
@@ -18,6 +19,7 @@ type authService struct {
 	jwt         *auth.JWTService
 }
 
+// NewAuthService создает новый экземпляр AuthService.
 func NewAuthService(
 	userRepo interfaces.UserRepository,
 	sessionRepo interfaces.SessionRepository,
@@ -32,6 +34,7 @@ func NewAuthService(
 	}
 }
 
+// Register регистрирует нового пользователя.
 func (s *authService) Register(ctx context.Context, email, password string) (*models.User, error) {
 	existingUser, err := s.userRepo.GetByEmail(ctx, email)
 	if err == nil && existingUser != nil {
@@ -55,6 +58,7 @@ func (s *authService) Register(ctx context.Context, email, password string) (*mo
 	return user, nil
 }
 
+// Login выполняет аутентификацию пользователя и возвращает токены.
 func (s *authService) Login(ctx context.Context, email, password string) (*models.User, string, string, error) {
 	user, err := s.userRepo.GetByEmail(ctx, email)
 	if err != nil {
@@ -88,6 +92,7 @@ func (s *authService) Login(ctx context.Context, email, password string) (*model
 	return user, accessToken, refreshToken, nil
 }
 
+// RefreshToken обновляет access токен с помощью refresh токена.
 func (s *authService) RefreshToken(ctx context.Context, refreshToken string) (string, string, error) {
 	session, err := s.sessionRepo.GetByRefreshToken(ctx, refreshToken)
 	if err != nil {
@@ -123,6 +128,7 @@ func (s *authService) RefreshToken(ctx context.Context, refreshToken string) (st
 	return newAccessToken, newRefreshToken, nil
 }
 
+// Logout завершает сессию пользователя.
 func (s *authService) Logout(ctx context.Context, refreshToken string) error {
 	session, err := s.sessionRepo.GetByRefreshToken(ctx, refreshToken)
 	if err != nil {
@@ -136,6 +142,7 @@ func (s *authService) Logout(ctx context.Context, refreshToken string) error {
 	return nil
 }
 
+// ValidateToken проверяет валидность access токена и возвращает пользователя.
 func (s *authService) ValidateToken(ctx context.Context, token string) (*models.User, error) {
 	claims, err := s.jwt.ValidateToken(token)
 	if err != nil {

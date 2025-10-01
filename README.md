@@ -33,7 +33,7 @@ vaultfactory/
 
 ## Tech Stack
 
-- Go 1.25
+- Go 1.25.1
 - PostgreSQL
 - JWT authentication
 - AES-256-GCM encryption

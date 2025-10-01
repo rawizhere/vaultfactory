@@ -1,3 +1,4 @@
+// Package service содержит бизнес-логику клиентского приложения.
 package service
 
 import (
@@ -14,6 +15,7 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/shared/models"
 )
 
+// ClientService предоставляет методы для взаимодействия с сервером.
 type ClientService struct {
 	baseURL     string
 	accessToken string
@@ -21,6 +23,7 @@ type ClientService struct {
 	configDir   string
 }
 
+// NewClientService создает новый экземпляр ClientService.
 func NewClientService() *ClientService {
 	homeDir, _ := os.UserHomeDir()
 	configDir := filepath.Join(homeDir, ".vaultfactory")
@@ -42,6 +45,7 @@ func NewClientService() *ClientService {
 	return client
 }
 
+// Register регистрирует нового пользователя на сервере.
 func (c *ClientService) Register(ctx context.Context, email, password string) (*models.User, error) {
 	req := map[string]string{
 		"email":    email,
@@ -64,6 +68,7 @@ func (c *ClientService) Register(ctx context.Context, email, password string) (*
 	return authResp.User, nil
 }
 
+// Login выполняет аутентификацию пользователя на сервере.
 func (c *ClientService) Login(ctx context.Context, email, password string) (*models.User, string, string, error) {
 	req := map[string]string{
 		"email":    email,

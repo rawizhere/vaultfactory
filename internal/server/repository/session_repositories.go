@@ -11,14 +11,17 @@ import (
 	"github.com/uptrace/bun"
 )
 
+// sessionRepository реализует интерфейс SessionRepository для работы с сессиями пользователей.
 type sessionRepository struct {
 	db *bun.DB
 }
 
+// NewSessionRepository создает новый экземпляр SessionRepository.
 func NewSessionRepository(db *bun.DB) interfaces.SessionRepository {
 	return &sessionRepository{db: db}
 }
 
+// Create создает новую сессию пользователя в базе данных.
 func (r *sessionRepository) Create(ctx context.Context, session *models.UserSession) error {
 	_, err := r.db.NewInsert().Model(session).Exec(ctx)
 	if err != nil {
@@ -27,6 +30,7 @@ func (r *sessionRepository) Create(ctx context.Context, session *models.UserSess
 	return nil
 }
 
+// GetByRefreshToken получает сессию по refresh токену.
 func (r *sessionRepository) GetByRefreshToken(ctx context.Context, refreshToken string) (*models.UserSession, error) {
 	session := new(models.UserSession)
 	err := r.db.NewSelect().
@@ -40,6 +44,7 @@ func (r *sessionRepository) GetByRefreshToken(ctx context.Context, refreshToken 
 	return session, nil
 }
 
+// GetByUserID получает все сессии пользователя.
 func (r *sessionRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]*models.UserSession, error) {
 	var sessions []*models.UserSession
 	err := r.db.NewSelect().
@@ -52,6 +57,7 @@ func (r *sessionRepository) GetByUserID(ctx context.Context, userID uuid.UUID) (
 	return sessions, nil
 }
 
+// Update обновляет данные сессии в базе данных.
 func (r *sessionRepository) Update(ctx context.Context, session *models.UserSession) error {
 	_, err := r.db.NewUpdate().Model(session).Where("id = ?", session.ID).Exec(ctx)
 	if err != nil {
@@ -60,6 +66,7 @@ func (r *sessionRepository) Update(ctx context.Context, session *models.UserSess
 	return nil
 }
 
+// Delete удаляет сессию из базы данных.
 func (r *sessionRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := r.db.NewDelete().Model((*models.UserSession)(nil)).Where("id = ?", id).Exec(ctx)
 	if err != nil {
@@ -68,6 +75,7 @@ func (r *sessionRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
+// DeleteByUserID удаляет все сессии пользователя.
 func (r *sessionRepository) DeleteByUserID(ctx context.Context, userID uuid.UUID) error {
 	_, err := r.db.NewDelete().Model((*models.UserSession)(nil)).Where("user_id = ?", userID).Exec(ctx)
 	if err != nil {
@@ -76,6 +84,7 @@ func (r *sessionRepository) DeleteByUserID(ctx context.Context, userID uuid.UUID
 	return nil
 }
 
+// DeleteExpired удаляет истекшие сессии.
 func (r *sessionRepository) DeleteExpired(ctx context.Context) error {
 	_, err := r.db.NewDelete().
 		Model((*models.UserSession)(nil)).

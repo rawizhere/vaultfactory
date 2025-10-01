@@ -1,3 +1,4 @@
+// Package models содержит доменные модели данных системы.
 package models
 
 import (
@@ -7,15 +8,17 @@ import (
 	"github.com/uptrace/bun"
 )
 
+// DataType определяет типы данных, которые могут храниться в системе.
 type DataType string
 
 const (
-	LoginPassword DataType = "login_password"
-	TextData      DataType = "text_data"
-	BinaryData    DataType = "binary_data"
-	BankCard      DataType = "bank_card"
+	LoginPassword DataType = "login_password" // Логин и пароль
+	TextData      DataType = "text_data"      // Текстовые данные
+	BinaryData    DataType = "binary_data"    // Бинарные данные
+	BankCard      DataType = "bank_card"      // Банковские карты
 )
 
+// DataItem представляет элемент данных пользователя.
 type DataItem struct {
 	bun.BaseModel `bun:"table:data_items"`
 
@@ -33,6 +36,7 @@ type DataItem struct {
 	User *User `json:"user,omitempty" bun:"rel:belongs-to,join:user_id=id"`
 }
 
+// DataVersion представляет версию элемента данных для синхронизации.
 type DataVersion struct {
 	bun.BaseModel `bun:"table:data_versions"`
 
@@ -43,5 +47,3 @@ type DataVersion struct {
 
 	DataItem *DataItem `json:"data_item,omitempty" bun:"rel:belongs-to,join:data_id=id"`
 }
-
-

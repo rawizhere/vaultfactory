@@ -1,3 +1,4 @@
+// Package auth содержит компоненты для аутентификации и авторизации.
 package auth
 
 import (
@@ -9,17 +10,20 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/shared/models"
 )
 
+// JWTService предоставляет методы для работы с JWT токенами.
 type JWTService struct {
 	secretKey     []byte
 	tokenDuration time.Duration
 }
 
+// Claims содержит данные JWT токена.
 type Claims struct {
 	UserID uuid.UUID `json:"user_id"`
 	Email  string    `json:"email"`
 	jwt.RegisteredClaims
 }
 
+// NewJWTService создает новый экземпляр JWTService.
 func NewJWTService(secretKey string, tokenDuration time.Duration) *JWTService {
 	return &JWTService{
 		secretKey:     []byte(secretKey),
@@ -27,6 +31,7 @@ func NewJWTService(secretKey string, tokenDuration time.Duration) *JWTService {
 	}
 }
 
+// GenerateToken создает JWT токен для пользователя.
 func (j *JWTService) GenerateToken(user *models.User) (string, error) {
 	claims := &Claims{
 		UserID: user.ID,
@@ -44,6 +49,7 @@ func (j *JWTService) GenerateToken(user *models.User) (string, error) {
 	return token.SignedString(j.secretKey)
 }
 
+// ValidateToken проверяет валидность JWT токена и возвращает claims.
 func (j *JWTService) ValidateToken(tokenString string) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -70,5 +76,3 @@ func (j *JWTService) GenerateRefreshToken() (string, error) {
 	}
 	return fmt.Sprintf("%x", token), nil
 }
-
-

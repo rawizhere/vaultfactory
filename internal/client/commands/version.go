@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// NewVersionCommand создает команду для отображения информации о версии.
 func NewVersionCommand(version, buildDate, buildCommit string) *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
@@ -18,6 +19,7 @@ func NewVersionCommand(version, buildDate, buildCommit string) *cobra.Command {
 	}
 }
 
+// getBuildInfo возвращает информацию о сборке или "N/A" если не указана.
 func getBuildInfo(value string) string {
 	if value == "" {
 		return "N/A"

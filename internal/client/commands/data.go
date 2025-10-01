@@ -10,6 +10,7 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/shared/models"
 )
 
+// NewDataCommands создает команды для управления данными.
 func NewDataCommands() *cobra.Command {
 	dataCmd := &cobra.Command{
 		Use:   "data",

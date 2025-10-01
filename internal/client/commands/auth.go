@@ -1,3 +1,4 @@
+// Package commands содержит CLI команды для клиентского приложения.
 package commands
 
 import (
@@ -8,6 +9,7 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/client/service"
 )
 
+// NewAuthCommands создает команды для аутентификации.
 func NewAuthCommands() *cobra.Command {
 	authCmd := &cobra.Command{
 		Use:   "auth",
