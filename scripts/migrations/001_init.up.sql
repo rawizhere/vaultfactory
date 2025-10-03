@@ -62,4 +62,10 @@ CREATE INDEX idx_data_versions_data_id ON data_versions(data_id);
 CREATE INDEX idx_data_versions_version ON data_versions(version);
 CREATE INDEX idx_data_versions_data_id_version ON data_versions(data_id, version);
 
+-- Additional indexes for performance
+CREATE INDEX idx_data_items_user_id_type ON data_items(user_id, type);
+CREATE INDEX idx_data_items_name ON data_items(name);
+CREATE INDEX idx_data_items_user_id_name ON data_items(user_id, name);
+CREATE INDEX idx_data_items_type_created_at ON data_items(type, created_at);
+
 

@@ -29,7 +29,7 @@ func NewClientService() *ClientService {
 	configDir := filepath.Join(homeDir, ".vaultfactory")
 
 	// Создаём директорию конфигурации если её нет
-	os.MkdirAll(configDir, 0755)
+	_ = os.MkdirAll(configDir, 0755)
 
 	client := &ClientService{
 		baseURL: "http://localhost:8080/api/v1",
@@ -40,7 +40,7 @@ func NewClientService() *ClientService {
 	}
 
 	// Загружаем сохранённый токен
-	client.loadToken()
+	_ = client.loadToken()
 
 	return client
 }
@@ -91,16 +91,11 @@ func (c *ClientService) Login(ctx context.Context, email, password string) (*mod
 	}
 
 	c.accessToken = authResp.AccessToken
-	c.saveToken()
+	_ = c.saveToken()
 	return authResp.User, authResp.AccessToken, authResp.RefreshToken, nil
 }
 
 func (c *ClientService) AddData(ctx context.Context, dataType models.DataType, name, metadata, data string) (*models.DataItem, error) {
-	// Отладка: выводим строку данных
-	fmt.Printf("DEBUG: Received data string: %q\n", data)
-	fmt.Printf("DEBUG: Data bytes: %v\n", []byte(data))
-
-	// Проверяем что данные являются валидным JSON
 	var jsonData json.RawMessage
 	if err := json.Unmarshal([]byte(data), &jsonData); err != nil {
 		return nil, fmt.Errorf("invalid JSON data: %w", err)

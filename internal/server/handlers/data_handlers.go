@@ -82,7 +82,7 @@ func (h *DataHandler) CreateData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	_ = json.NewEncoder(w).Encode(response)
 }
 
 // GetData обрабатывает запрос на получение элемента данных по ID.
@@ -115,7 +115,7 @@ func (h *DataHandler) GetData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	_ = json.NewEncoder(w).Encode(response)
 }
 
 // GetUserData обрабатывает запрос на получение всех данных пользователя.
@@ -153,7 +153,7 @@ func (h *DataHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(responses)
+	_ = json.NewEncoder(w).Encode(responses)
 }
 
 // UpdateData обрабатывает запрос на обновление элемента данных.
@@ -192,7 +192,7 @@ func (h *DataHandler) UpdateData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	_ = json.NewEncoder(w).Encode(response)
 }
 
 // DeleteData обрабатывает запрос на удаление элемента данных.
@@ -252,5 +252,5 @@ func (h *DataHandler) SyncData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(responses)
+	_ = json.NewEncoder(w).Encode(responses)
 }

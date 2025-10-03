@@ -8,6 +8,7 @@ import (
 	"github.com/tempizhere/vaultfactory/internal/server/auth"
 	"github.com/tempizhere/vaultfactory/internal/shared/crypto"
 	"github.com/tempizhere/vaultfactory/internal/shared/interfaces"
+	"github.com/tempizhere/vaultfactory/internal/shared/logger"
 	"github.com/tempizhere/vaultfactory/internal/shared/models"
 )
 
@@ -17,6 +18,7 @@ type authService struct {
 	sessionRepo interfaces.SessionRepository
 	crypto      *crypto.CryptoService
 	jwt         *auth.JWTService
+	logger      logger.Logger
 }
 
 // NewAuthService создает новый экземпляр AuthService.
@@ -25,12 +27,14 @@ func NewAuthService(
 	sessionRepo interfaces.SessionRepository,
 	crypto *crypto.CryptoService,
 	jwt *auth.JWTService,
+	logger logger.Logger,
 ) interfaces.AuthService {
 	return &authService{
 		userRepo:    userRepo,
 		sessionRepo: sessionRepo,
 		crypto:      crypto,
 		jwt:         jwt,
+		logger:      logger,
 	}
 }
 

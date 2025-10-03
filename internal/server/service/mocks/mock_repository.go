@@ -206,3 +206,220 @@ func (mr *MockVersionRepositoryMockRecorder) GetLatestVersion(arg0, arg1 interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLatestVersion", reflect.TypeOf((*MockVersionRepository)(nil).GetLatestVersion), arg0, arg1)
 }
 
+// MockUserRepository is a mock of UserRepository interface.
+type MockUserRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockUserRepositoryMockRecorder
+}
+
+// MockUserRepositoryMockRecorder is the mock recorder for MockUserRepository.
+type MockUserRepositoryMockRecorder struct {
+	mock *MockUserRepository
+}
+
+// NewMockUserRepository creates a new mock instance.
+func NewMockUserRepository(ctrl *gomock.Controller) *MockUserRepository {
+	mock := &MockUserRepository{ctrl: ctrl}
+	mock.recorder = &MockUserRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockUserRepository) Create(arg0 context.Context, arg1 *models.User) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockUserRepositoryMockRecorder) Create(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), arg0, arg1)
+}
+
+// Delete mocks base method.
+func (m *MockUserRepository) Delete(arg0 context.Context, arg1 uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockUserRepositoryMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockUserRepository)(nil).Delete), arg0, arg1)
+}
+
+// GetByEmail mocks base method.
+func (m *MockUserRepository) GetByEmail(arg0 context.Context, arg1 string) (*models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByEmail", arg0, arg1)
+	ret0, _ := ret[0].(*models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByEmail indicates an expected call of GetByEmail.
+func (mr *MockUserRepositoryMockRecorder) GetByEmail(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByEmail", reflect.TypeOf((*MockUserRepository)(nil).GetByEmail), arg0, arg1)
+}
+
+// GetByID mocks base method.
+func (m *MockUserRepository) GetByID(arg0 context.Context, arg1 uuid.UUID) (*models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByID", arg0, arg1)
+	ret0, _ := ret[0].(*models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByID indicates an expected call of GetByID.
+func (mr *MockUserRepositoryMockRecorder) GetByID(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByID", reflect.TypeOf((*MockUserRepository)(nil).GetByID), arg0, arg1)
+}
+
+// Update mocks base method.
+func (m *MockUserRepository) Update(arg0 context.Context, arg1 *models.User) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockUserRepositoryMockRecorder) Update(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUserRepository)(nil).Update), arg0, arg1)
+}
+
+// MockSessionRepository is a mock of SessionRepository interface.
+type MockSessionRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockSessionRepositoryMockRecorder
+}
+
+// MockSessionRepositoryMockRecorder is the mock recorder for MockSessionRepository.
+type MockSessionRepositoryMockRecorder struct {
+	mock *MockSessionRepository
+}
+
+// NewMockSessionRepository creates a new mock instance.
+func NewMockSessionRepository(ctrl *gomock.Controller) *MockSessionRepository {
+	mock := &MockSessionRepository{ctrl: ctrl}
+	mock.recorder = &MockSessionRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockSessionRepository) EXPECT() *MockSessionRepositoryMockRecorder {
+	return m.recorder
+}
+
+// Create mocks base method.
+func (m *MockSessionRepository) Create(arg0 context.Context, arg1 *models.UserSession) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Create", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Create indicates an expected call of Create.
+func (mr *MockSessionRepositoryMockRecorder) Create(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockSessionRepository)(nil).Create), arg0, arg1)
+}
+
+// Delete mocks base method.
+func (m *MockSessionRepository) Delete(arg0 context.Context, arg1 uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockSessionRepositoryMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockSessionRepository)(nil).Delete), arg0, arg1)
+}
+
+// DeleteByUserID mocks base method.
+func (m *MockSessionRepository) DeleteByUserID(arg0 context.Context, arg1 uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteByUserID", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteByUserID indicates an expected call of DeleteByUserID.
+func (mr *MockSessionRepositoryMockRecorder) DeleteByUserID(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByUserID", reflect.TypeOf((*MockSessionRepository)(nil).DeleteByUserID), arg0, arg1)
+}
+
+// DeleteExpired mocks base method.
+func (m *MockSessionRepository) DeleteExpired(arg0 context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteExpired", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteExpired indicates an expected call of DeleteExpired.
+func (mr *MockSessionRepositoryMockRecorder) DeleteExpired(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteExpired", reflect.TypeOf((*MockSessionRepository)(nil).DeleteExpired), arg0)
+}
+
+// GetByRefreshToken mocks base method.
+func (m *MockSessionRepository) GetByRefreshToken(arg0 context.Context, arg1 string) (*models.UserSession, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByRefreshToken", arg0, arg1)
+	ret0, _ := ret[0].(*models.UserSession)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByRefreshToken indicates an expected call of GetByRefreshToken.
+func (mr *MockSessionRepositoryMockRecorder) GetByRefreshToken(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByRefreshToken", reflect.TypeOf((*MockSessionRepository)(nil).GetByRefreshToken), arg0, arg1)
+}
+
+// GetByUserID mocks base method.
+func (m *MockSessionRepository) GetByUserID(arg0 context.Context, arg1 uuid.UUID) ([]*models.UserSession, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByUserID", arg0, arg1)
+	ret0, _ := ret[0].([]*models.UserSession)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByUserID indicates an expected call of GetByUserID.
+func (mr *MockSessionRepositoryMockRecorder) GetByUserID(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockSessionRepository)(nil).GetByUserID), arg0, arg1)
+}
+
+// Update mocks base method.
+func (m *MockSessionRepository) Update(arg0 context.Context, arg1 *models.UserSession) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockSessionRepositoryMockRecorder) Update(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockSessionRepository)(nil).Update), arg0, arg1)
+}

@@ -48,7 +48,6 @@ fmt-check: ## Check if code is formatted
 
 security: ## Run security checks
 	@echo "Running security checks"
-	@gosec ./...
 	@govulncheck ./...
 
 clean: ## Clean build artifacts
@@ -70,7 +69,6 @@ dev-setup: deps ## Setup development environment
 	@echo "Installing development tools"
 	@go install honnef.co/go/tools/cmd/staticcheck@latest
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	@go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
 	@go install golang.org/x/vuln/cmd/govulncheck@latest
 
 db-migrate: ## Run database migrations

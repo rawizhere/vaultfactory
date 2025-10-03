@@ -9,23 +9,36 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Config struct {
-	Server   ServerConfig   `mapstructure:"server"`
-	Database DatabaseConfig `mapstructure:"database"`
-	Security SecurityConfig `mapstructure:"security"`
-	Logging  LoggingConfig  `mapstructure:"logging"`
+// ConfigReader определяет интерфейс для чтения конфигурации.
+type ConfigReader interface {
+	GetDSN() string
+	GetServerAddr() string
+	GetJWTSecret() string
+	GetEncryptionKey() string
+	GetJWTExpireDuration() time.Duration
+	GetRefreshTokenExpireDuration() time.Duration
+	GetLoggingLevel() string
+	GetLoggingFormat() string
+	GetLoggingOutput() string
 }
 
-type ServerConfig struct {
+type config struct {
+	server   serverConfig
+	database databaseConfig
+	security securityConfig
+	logging  loggingConfig
+}
+
+type serverConfig struct {
 	Host string `mapstructure:"host"`
 	Port int    `mapstructure:"port"`
 }
 
-type DatabaseConfig struct {
+type databaseConfig struct {
 	DSN string `mapstructure:"dsn"`
 }
 
-type SecurityConfig struct {
+type securityConfig struct {
 	JWTSecret                  string        `mapstructure:"jwt_secret"`
 	EncryptionKey              string        `mapstructure:"encryption_key"`
 	JWTExpireHours             int           `mapstructure:"jwt_expire_hours"`
@@ -34,20 +47,19 @@ type SecurityConfig struct {
 	RefreshTokenExpireDuration time.Duration `mapstructure:"-"`
 }
 
-type LoggingConfig struct {
+type loggingConfig struct {
 	Level  string `mapstructure:"level"`
 	Format string `mapstructure:"format"`
 	Output string `mapstructure:"output"`
 }
 
-func LoadConfig(configPath string) (*Config, error) {
-	// Загружаем .env файл если он существует
-	godotenv.Load()
+// LoadConfig загружает конфигурацию из файла и возвращает ConfigReader.
+func LoadConfig(configPath string) (ConfigReader, error) {
+	_ = godotenv.Load()
 
 	viper.SetConfigFile(configPath)
 	viper.SetConfigType("yaml")
 
-	// Включаем чтение из переменных окружения
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -65,42 +77,58 @@ func LoadConfig(configPath string) (*Config, error) {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
-	var config Config
-	if err := viper.Unmarshal(&config); err != nil {
+	var cfg config
+	if err := viper.Unmarshal(&cfg); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	config.Security.JWTExpireDuration = time.Duration(config.Security.JWTExpireHours) * time.Hour
-	config.Security.RefreshTokenExpireDuration = time.Duration(config.Security.RefreshTokenExpireDays) * 24 * time.Hour
+	cfg.security.JWTExpireDuration = time.Duration(cfg.security.JWTExpireHours) * time.Hour
+	cfg.security.RefreshTokenExpireDuration = time.Duration(cfg.security.RefreshTokenExpireDays) * 24 * time.Hour
 
-	return &config, nil
+	return &cfg, nil
 }
 
-func (c *Config) GetDSN() string {
-	// Проверяем установлена ли переменная окружения DB_DSN
+func (c *config) GetDSN() string {
 	if dsn := viper.GetString("DB_DSN"); dsn != "" {
 		return dsn
 	}
-
-	return c.Database.DSN
+	return c.database.DSN
 }
 
-func (c *Config) GetServerAddr() string {
-	return fmt.Sprintf("%s:%d", c.Server.Host, c.Server.Port)
+func (c *config) GetServerAddr() string {
+	return fmt.Sprintf("%s:%d", c.server.Host, c.server.Port)
 }
 
-func (c *Config) GetJWTSecret() string {
-	// Проверяем установлена ли переменная окружения JWT_SECRET
+func (c *config) GetJWTSecret() string {
 	if jwtSecret := viper.GetString("JWT_SECRET"); jwtSecret != "" {
 		return jwtSecret
 	}
-	return c.Security.JWTSecret
+	return c.security.JWTSecret
 }
 
-func (c *Config) GetEncryptionKey() string {
-	// Проверяем установлена ли переменная окружения ENCRYPTION_KEY
+func (c *config) GetEncryptionKey() string {
 	if encryptionKey := viper.GetString("ENCRYPTION_KEY"); encryptionKey != "" {
 		return encryptionKey
 	}
-	return c.Security.EncryptionKey
+	return c.security.EncryptionKey
+}
+
+func (c *config) GetJWTExpireDuration() time.Duration {
+	return c.security.JWTExpireDuration
+}
+
+func (c *config) GetRefreshTokenExpireDuration() time.Duration {
+	return c.security.RefreshTokenExpireDuration
+}
+
+func (c *config) GetLoggingLevel() string {
+	return c.logging.Level
+}
+
+func (c *config) GetLoggingFormat() string {
+	return c.logging.Format
+}
+
+func (c *config) GetLoggingOutput() string {
+	return c.logging.Output
 }
